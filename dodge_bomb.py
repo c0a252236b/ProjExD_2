@@ -20,7 +20,7 @@ def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     戻り値:タプル(横方向判定結果,縦方向判定結果)
     画面内であればTrue
     """
-    return rct.left >= 0 and rct.right <= WIDTH,rct.bottom >= 0 and rct.top <= HEIGHT
+    return rct.left >= 0 and rct.right <= WIDTH,rct.top >= 0 and rct.bottom <= HEIGHT
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -46,6 +46,11 @@ def main():
             if event.type == pg.QUIT:
                 return
         screen.blit(bg_img, [0, 0])
+
+        # 衝突判定
+        if kk_rct.colliderect(bb_rct):
+            print("Game Over")
+            return
 
         # 爆弾の移動
         if not (check_bound(bb_rct)[0]):
