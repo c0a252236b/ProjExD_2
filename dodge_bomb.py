@@ -27,6 +27,11 @@ def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
 
 
 def gameOver(screen: pg.surface) -> None:
+    """
+    引数:pygame.Surface
+    戻り値:なし
+    ゲームオーバーの画面表示
+    """
     bg_black = pg.Surface((WIDTH,HEIGHT))
     pg.draw.rect(bg_black,(0,0,0),bg_black.get_rect())
     bg_black.set_alpha(200)
@@ -43,16 +48,21 @@ def gameOver(screen: pg.surface) -> None:
     
 
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    """
+    引数:なし
+    戻り値:辞書
+    移動量の合計値に対応した画像の辞書入手
+    """
     kk_dict = {
         (0,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
-        (5,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 180,0.9),
-        (5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
+        (5,0):pg.transform.flip(pg.image.load("fig/3.png"),True, False),
+        (5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -135,0.9),
         (0,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 90,0.9),
-        (-5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
+        (-5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -45,0.9),
         (5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 135,0.9),
         (0,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -90,0.9),
         (-5,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
-        (-5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -45,0.9),
+        (-5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
 
     }
     return kk_dict
