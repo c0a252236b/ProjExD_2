@@ -2,6 +2,7 @@ import os
 import pygame as pg
 import random
 import sys
+import time
 
 
 
@@ -14,6 +15,7 @@ DELTA = {
     }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+
 def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     """
     引数:pygame.Rect
@@ -21,6 +23,25 @@ def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     画面内であればTrue
     """
     return rct.left >= 0 and rct.right <= WIDTH,rct.top >= 0 and rct.bottom <= HEIGHT
+
+
+def gameOver(screen: pg.surface) -> None:
+    bg_black = pg.Surface((WIDTH,HEIGHT))
+    pg.draw.rect(bg_black,(0,0,0),bg_black.get_rect())
+    bg_black.set_alpha(200)
+    fonto = pg.font.Font(None,100)
+    txt = fonto.render("GameOver",True,(255,255,255))
+    kk_img8 = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    kk_rct8 = kk_img8.get_rect()
+    bg_black.blit(txt,[WIDTH*1/3,HEIGHT*1/2])
+    bg_black.blit(kk_img8,[WIDTH*3/4,HEIGHT*1/2])
+    bg_black.blit(kk_img8,[WIDTH*1/4,HEIGHT*1/2])
+    screen.blit(bg_black,[0,0])
+    pg.display.update()
+    time.sleep(5)
+    
+    
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -50,6 +71,7 @@ def main():
         # 衝突判定
         if kk_rct.colliderect(bb_rct):
             print("Game Over")
+            gameOver(screen)
             return
 
         # 爆弾の移動
