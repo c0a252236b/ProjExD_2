@@ -1,7 +1,8 @@
 import os
 import sys
-import pygame as pg
 import random
+import pygame as pg
+
 
 
 WIDTH, HEIGHT = 1100, 650
@@ -11,14 +12,18 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
+    bg_img = pg.image.load("fig/pg_bg.jpg")
+
     bb_img = pg.Surface((20,20))
     pg.draw.circle(bb_img,(255,0,0),(10,10),10)
     bb_img.set_colorkey((0,0,0))
     bb_rct = bb_img.get_rect()
+    bb_rct.center = (int(random.random()*WIDTH),int(random.random()*HEIGHT))
+
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
     clock = pg.time.Clock()
     tmr = 0
     vx,vy = 0,0
@@ -26,22 +31,25 @@ def main():
 
     while True:
         for event in pg.event.get():
-            if event.type == pg.QUIT: 
+            if event.type == pg.QUIT:
                 return
         screen.blit(bg_img, [0, 0])
 
-        #爆弾の移動
-        vx += 5
-        vy += 5
+        # 爆弾の移動
+        vx = 5
+        vy = 5
         bb_rct.move_ip(vx,vy)
 
         key_lst = pg.key.get_pressed()
+        
+        # こうかとんの移動
         sum_mv = [0, 0]
         for key, mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
         kk_rct.move_ip(sum_mv)
+
         screen.blit(kk_img, kk_rct)
         screen.blit(bb_img,bb_rct)
         pg.display.update()
