@@ -16,6 +16,7 @@ DELTA = {
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+
 def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     """
     引数:pygame.Rect
@@ -40,8 +41,24 @@ def gameOver(screen: pg.surface) -> None:
     pg.display.update()
     time.sleep(5)
     
-    
 
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    kk_dict = {
+        (0,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
+        (5,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 180,0.9),
+        (5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
+        (0,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 90,0.9),
+        (-5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
+        (5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 135,0.9),
+        (0,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -90,0.9),
+        (-5,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
+        (-5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -45,0.9),
+
+    }
+    return kk_dict
+        
+
+    
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -62,6 +79,7 @@ def main():
     tmr = 0
     vx,vy = 5,5  # 爆弾の初期速度
 
+    kk_imgs = get_kk_imgs()
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -92,6 +110,8 @@ def main():
         kk_rct.move_ip(sum_mv)
         if not (check_bound(kk_rct) == (True,True)):
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
+
+        kk_img = kk_imgs[tuple(sum_mv)]
 
         screen.blit(kk_img, kk_rct)
         screen.blit(bb_img,bb_rct)
