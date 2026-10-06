@@ -25,7 +25,7 @@ def check_bound(rct: pg.Rect) -> tuple[bool,bool]:
     """
     return rct.left >= 0 and rct.right <= WIDTH,rct.top >= 0 and rct.bottom <= HEIGHT
 
-
+# ゲームオーバー
 def gameOver(screen: pg.surface) -> None:
     """
     引数:pygame.Surface
@@ -46,28 +46,53 @@ def gameOver(screen: pg.surface) -> None:
     pg.display.update()
     time.sleep(5)
     
-
+# 向きを切り替えるための辞書作る
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     """
     引数:なし
     戻り値:辞書
     移動量の合計値に対応した画像の辞書入手
     """
+    kk_cry = pg.image.load("fig/3.png")
     kk_dict = {
-        (0,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
-        (5,0):pg.transform.flip(pg.image.load("fig/3.png"),True, False),
-        (5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -135,0.9),
-        (0,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 90,0.9),
-        (-5,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -45,0.9),
-        (5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 135,0.9),
-        (0,-5):pg.transform.rotozoom(pg.image.load("fig/3.png"), -90,0.9),
-        (-5,0):pg.transform.rotozoom(pg.image.load("fig/3.png"), 0,0.9),
-        (-5,5):pg.transform.rotozoom(pg.image.load("fig/3.png"), 45,0.9),
+        (0,0):pg.transform.rotozoom(kk_cry, 0,0.9),
+        (5,0):pg.transform.flip(kk_cry,True, False),
+        (5,-5):pg.transform.rotozoom(pg.transform.flip(kk_cry,True, False), 45,0.9),
+        (0,5):pg.transform.rotozoom(kk_cry, 90,0.9),
+        (-5,-5):pg.transform.rotozoom(kk_cry, -45,0.9),
+        (5,5):pg.transform.rotozoom(pg.transform.flip(kk_cry,True, False), -45,0.9),
+        (0,-5):pg.transform.rotozoom(kk_cry, -90,0.9),
+        (-5,0):pg.transform.rotozoom(kk_cry, 0,0.9),
+        (-5,5):pg.transform.rotozoom(kk_cry, 45,0.9),
 
     }
     return kk_dict
-        
 
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    引数:なし
+    戻り値:タプル
+    段階ごとの爆弾の大きさと加速度のリストをそれぞれ返す
+    """
+    bb_imgs = []
+    for r in range(1,11):
+        bb_img = pg.Surface((20*r,20*r))
+        pg.draw.circle(bb_img,(255,0,0),(10*r,10*r),10*r)
+        bb_img.set_colorkey((0,0,0))
+        bb_imgs.append(bb_img)
+    bb_accs = [a for a in range(1, 11)]
+    return bb_imgs,bb_accs
+
+
+# def increase_bomb() -> tuple[pg.Surface]:
+#     bb_imgs = []
+#     for r in range(1,11):
+#         bb_img = pg.Surface((20,20))
+#         pg.draw.circle(bb_img,(255,0,0),(10,10),10)
+#         bb_img.set_colorkey((0,0,0))
+#         bb_imgs.append(bb_img)
+#     return bb_imgs,-1
     
 
 def main():
@@ -90,6 +115,10 @@ def main():
     vx,vy = 5,5  # 爆弾の初期速度
 
     kk_imgs = get_kk_imgs()
+
+    bb_accs = init_bb_imgs()[1]
+    bb_imgs = init_bb_imgs()[0]
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -107,7 +136,17 @@ def main():
             vx *= -1
         if not (check_bound(bb_rct)[1]):
             vy *= -1
-        bb_rct.move_ip(vx,vy)
+
+        # 爆弾の拡大
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+
+        bb_rct.width = bb_img.get_rect().width
+
+        bb_rct.move_ip(avx,avy)
+
+
 
         key_lst = pg.key.get_pressed()
         
